@@ -1,4 +1,4 @@
-val empty = #"e";
+val empty = #"\000";
 fun next_token [] = (empty, [])
   | next_token (X::XS) = (X, XS)
 
@@ -19,7 +19,6 @@ fun states (SIGMA, S, S0, DELTA, F) = S;
 fun start_state (SIGMA, S, S0, DELTA, F) = S0;
 fun transitions (SIGMA, S, S0, DELTA, F) = DELTA;
 fun accepting_states (SIGMA, S, S0, DELTA, F) = F;
-val SIGMA = [#"a", #"b"];
 
 fun printList L = print (String.concat [(String.concatWith ", " (map Char.toString L)), "\n"]);
 
@@ -119,4 +118,5 @@ and parse_base SIGMA (#"("::XS) =
       raise Fail "Character not in alphabet"
   end;
 
+val SIGMA = [#"a", #"b"];
 val (f, n) = parse SIGMA (explode "(a|(ab))*");
