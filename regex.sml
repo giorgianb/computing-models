@@ -27,8 +27,6 @@ fun parse SIGMA E =
   let
     val (left, ltoks) = parse_union SIGMA E
   in
-    print "parse ";
-    printList E;
     if ltoks = [] orelse (hd ltoks) = #")" orelse (hd ltoks) = #"|" then
       (left, ltoks)
     else
@@ -51,8 +49,6 @@ and parse_union SIGMA E =
     val (left, ltoks) = parse_klein SIGMA E
     val (nt, rtoks) = next_token ltoks
   in
-    print "parse_union ";
-    printList E;
     if nt = #"|" then
       let
         val (right, rtoks) = parse_klein SIGMA rtoks
@@ -76,8 +72,6 @@ and parse_klein SIGMA E =
     val (left, ltoks) = parse_base SIGMA E
     val (nt, rtoks) = next_token ltoks
   in
-    print "parse_klein ";
-    printList E;
     if nt = #"*" then
       let
         val start = sym ()
@@ -100,10 +94,6 @@ and parse_base SIGMA (#"("::XS) =
     val (e, toks) = parse SIGMA XS
     val (nt, rtoks) = next_token toks
   in
-    print "parse_base ";
-    printList XS;
-    print "parse_base toks: ";
-    printList toks;
     if nt <> #")" then
       raise Fail "Missing parens"
     else
