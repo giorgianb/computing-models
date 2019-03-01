@@ -1,14 +1,14 @@
-val empty = #"\000";
-fun next_token [] = (empty, [])
+val EMPTY = #"\000";
+fun next_token [] = (EMPTY, [])
   | next_token (X::XS) = (X, XS)
 
-val csym = ref 0;
-fun sym () =
+val cstate = ref 0;
+fun new_state () =
   let
-    val nsym = !csym
+    val nstate = !cstate
   in
-    csym := nsym + 1;
-    nsym
+    cstate := nstate + 1;
+    nstate
   end;
 
 fun member E [] = false
@@ -31,7 +31,7 @@ fun parse SIGMA E =
     else
       let
         val (right, rtoks) = parse SIGMA ltoks
-        val ntrans = map (fn (s) => ((s, empty), start_state right)) (accepting_states left)
+        val ntrans = map (fn (s) => ((s, EMPTY), start_state right)) (accepting_states left)
         val fsm = (
           SIGMA,
           (states left) @ (states right),
@@ -51,8 +51,8 @@ and parse_union SIGMA E =
     if nt = #"|" then
       let
         val (right, rtoks) = parse_klein SIGMA rtoks
-        val start = sym ()
-        val ntrans = [((start, empty), start_state left), ((start, empty), start_state right)] 
+        val start = new_state ()
+        val ntrans = [((start, EMPTY), start_state left), ((start, EMPTY), start_state right)] 
         val fsm = (
           SIGMA,
           (start::states left) @ states right,
@@ -73,13 +73,13 @@ and parse_klein SIGMA E =
   in
     if nt = #"*" then
       let
-        val start = sym ()
-        val ntrans = map (fn (s) => ((s, empty), start_state left)) (accepting_states left)
+        val start = new_state ()
+        val ntrans = map (fn (s) => ((s, EMPTY), start_state left)) (accepting_states left)
         val fsm = (
           SIGMA,
           start::states left,
           start,
-          [((start, empty), start_state left)] @ ntrans @ transitions left,
+          [((start, EMPTY), start_state left)] @ ntrans @ transitions left,
           start::accepting_states left
           )
       in
@@ -100,8 +100,8 @@ and parse_base SIGMA (#"("::XS) =
   end
   | parse_base SIGMA (X::XS) =
   let
-    val start_state = sym ()
-    val end_state = sym ()
+    val start_state = new_state ()
+    val end_state = new_state ()
     val fsm =  (
       SIGMA,
       [start_state, end_state],
