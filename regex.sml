@@ -20,8 +20,6 @@ fun start_state (SIGMA, S, S0, DELTA, F) = S0;
 fun transitions (SIGMA, S, S0, DELTA, F) = DELTA;
 fun accepting_states (SIGMA, S, S0, DELTA, F) = F;
 
-fun printList L = print (String.concat [(String.concatWith ", " (map Char.toString L)), "\n"]);
-
 fun parse SIGMA E =
   let
     val (left, ltoks) = parse_union SIGMA E
