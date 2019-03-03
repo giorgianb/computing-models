@@ -10,8 +10,8 @@ fun accepting_states (SIGMA, S, S0, DELTA, F) = F;
 
 fun evaluate F X =
   let
-    val second = (fn (a, b) => b)
-    val p = (fn (d, cd) => d = X)
+    fun second (a, b) = b
+    fun p (d, cd) = d = X
     val s = map second (List.filter p F);
   in
     map second (List.filter p F)

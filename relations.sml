@@ -11,7 +11,7 @@ fun relation (a, b) R = member (a, b) R;
 
 fun compose R1 R2 =
   let
-    val p = (fn (a, b, c) => relation (a, b) R1 andalso relation (b, c) R2)
+    fun p (a, b, c) = relation (a, b) R1 andalso relation (b, c) R2
     val tp = product3 (domain R1) (domain R2) (codomain R2)
     val c = map (fn (a, b, c) => (a, c)) (List.filter p tp)
   in
@@ -21,21 +21,21 @@ and product3 L1 L2 L3 = map (fn ((a, b), c) => (a, b, c)) (product (product L1 L
 
 fun reflective R =
   let
-    val p = (fn (a, b) => relation (a, a) R andalso relation (b, b) R)
+    fun p (a, b) = relation (a, a) R andalso relation (b, b) R
   in
     List.all p R
   end;
 
 fun symmetric R =
   let
-    val p = (fn (a, b) => relation (b, a) R)
+    fun p (a, b) = relation (b, a) R
   in
     List.all p R
   end;
 
 fun transitive R =
   let
-    val p = (fn (a, b) => List.all (fn c => implies (relation (b, c) R) (relation (a, c) R)) (set R))
+    fun p (a, b) = List.all (fn c => implies (relation (b, c) R) (relation (a, c) R)) (set R)
   in
     List.all p R
   end;
@@ -51,4 +51,3 @@ fun transitive_closure R =
   end
 and repeat 1 f x = f x
   | repeat n f x = if n > 0 then repeat (n - 1) f (f x) else x;
-

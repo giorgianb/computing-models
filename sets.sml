@@ -1,4 +1,3 @@
-
 fun member E [] = false
   | member E (X::XS) = if E = X then true else member E XS;
 

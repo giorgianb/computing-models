@@ -20,8 +20,8 @@ fun member E [] = false
 
 fun evaluate F X =
   let
-    val second = (fn (a, b) => b)
-    val p = (fn (d, cd) => d = X)
+    fun second (a, b) = b
+    fun p (d, cd) = d = X
   in
     hd (map second (List.filter p F))
   end;
