@@ -118,6 +118,3 @@ and parse_base SIGMA (#"("::XS) =
     else 
       raise Fail "Character not in alphabet"
   end;
-
-val SIGMA = (explode "abcdefghijklmnopqrstuvwxyz");
-val (f, n) = parse SIGMA (explode "(a|(ab))*");
