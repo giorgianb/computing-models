@@ -50,22 +50,3 @@ functor BinarySearchTree (O : ORDER) : TREE =
     fun visit empty f = ()
       | visit (node (e, left, right)) f = (visit left f; f e; visit right f);
   end;
-
-structure IntCmp = struct
-  type element = int
-  val compare = Int.compare
-end;
-
-structure RealCmp = struct
-  type element = real
-  val compare = Real.compare
-end
-
-structure IntBST = BinarySearchTree (IntCmp);
-structure RealBST = BinarySearchTree (RealCmp);
-val nextInt = Random.randRange (~1000, 1000);
-val r = Random.rand (1, 1);
-val ints = List.tabulate (100, fn x => nextInt r);
-val tree = IntBST.insertAll IntBST.empty ints;
-fun printInt x = print (String.concat [Int.toString x, " "]);
-IntBST.visit tree printInt;
