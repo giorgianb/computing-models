@@ -1,4 +1,48 @@
+use "relations.sml";
+
+fun printList L = print (String.concat ["[", (String.concatWith ", " (map
+  Int.toString L)), "]", "\n"]);
+(* NDFA Implementation *)
 val EMPTY = #"\000";
+fun alphabet (SIGMA, S, S0, DELTA, F) = SIGMA;
+fun states (SIGMA, S, S0, DELTA, F) = S;
+fun start_state (SIGMA, S, S0, DELTA, F) = S0;
+fun transitions (SIGMA, S, S0, DELTA, F) = DELTA;
+fun accepting_states (SIGMA, S, S0, DELTA, F) = F;
+
+fun evaluate F X =
+  let
+    val second = (fn (a, b) => b)
+    val p = (fn (d, cd) => d = X)
+    val s = map second (List.filter p F);
+  in
+    map second (List.filter p F)
+  end;
+
+fun next_states t s (SIGMA, S, S0, DELTA, F) =
+  if not (member t SIGMA) then
+    raise Fail "Not a valid symbol."
+  else if not (subset s S) then
+    raise Fail "Not a valid set of states."
+   else
+     let
+       val empty = List.filter (fn ((d, t), cd) => t == EMPTY)
+       val transitions = (map (fn s => (s, t)) s) @ (map (fn s => (s, EMPTY)) s)  
+     in
+       union (map (fn (s) => evaluate DELTA (s, t)) s)
+     end;
+
+fun in_language S FSM = intersection (run_ndfa [start_state FSM] S FSM) (accepting_states FSM) <> []
+and run_ndfa s [] FSM = s
+  | run_ndfa s (X::XS) FSM = 
+  let in
+    printList s;
+    print (Char.toString X);
+    print "\n";
+    run_ndfa (next_states X s FSM) XS FSM
+  end
+
+ (* Parser *)
 fun next_token [] = (EMPTY, [])
   | next_token (X::XS) = (X, XS)
 
@@ -10,15 +54,6 @@ fun new_state () =
     cstate := nstate + 1;
     nstate
   end;
-
-fun member E [] = false
-  | member E (X::XS) = if E = X then true else member E XS;
-
-fun alphabet (SIGMA, S, S0, DELTA, F) = SIGMA;
-fun states (SIGMA, S, S0, DELTA, F) = S;
-fun start_state (SIGMA, S, S0, DELTA, F) = S0;
-fun transitions (SIGMA, S, S0, DELTA, F) = DELTA;
-fun accepting_states (SIGMA, S, S0, DELTA, F) = F;
 
 fun parse SIGMA E =
   let
@@ -116,5 +151,5 @@ and parse_base SIGMA (#"("::XS) =
       raise Fail "Character not in alphabet"
   end;
 
-val SIGMA = [#"a", #"b"];
+val SIGMA = (explode "abcdefghijklmnopqrstuvwxyz");
 val (f, n) = parse SIGMA (explode "(a|(ab))*");
