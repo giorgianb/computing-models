@@ -1,11 +1,11 @@
-signature Tree = sig
+signature TREE = sig
   type 'a tree
   val empty : 'a tree
   val insert : 'a tree -> (('a * 'a) -> order)-> 'a -> 'a tree
   val visit : 'a tree -> ('a -> unit) -> unit
 end
 
-structure OBTree :> Tree = struct
+structure OBTree :> TREE = struct
   datatype 'a tree = empty | node of 'a * 'a tree * 'a tree
   val empty = empty;
   fun insert empty compare elem = node (elem, empty, empty)
