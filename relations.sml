@@ -50,5 +50,5 @@ fun transitive_closure R =
     repeat n (fn (e) => union e (compose e e)) R
   end
 and repeat 1 f x = f x
-  | repeat n f x = repeat (n - 1) f (f x);
+  | repeat n f x = if n > 0 then repeat (n - 1) f (f x) else x;
 
