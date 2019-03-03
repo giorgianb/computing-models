@@ -13,7 +13,13 @@ fun new_state () =
     nstate
   end;
 
-fun parse SIGMA E =
+fun parse SIGMA REGEX =
+  let
+    val (NDFA, TOKS) = parse_expression SIGMA (explode REGEX)
+  in
+    NDFA
+  end
+and parse_expression SIGMA E =
   let
     val (left, ltoks) = parse_union SIGMA E
   in
@@ -21,7 +27,7 @@ fun parse SIGMA E =
       (left, ltoks)
     else
       let
-        val (right, rtoks) = parse SIGMA ltoks
+        val (right, rtoks) = parse_expression SIGMA ltoks
         val ntrans = map (fn (s) => (s, start_state right)) (accepting_states left)
         val fsm = (
           SIGMA,
@@ -90,7 +96,7 @@ and parse_klein SIGMA E =
   end
 and parse_base SIGMA (#"("::XS) = 
   let
-    val (e, toks) = parse SIGMA XS
+    val (e, toks) = parse_expression SIGMA XS
     val (nt, rtoks) = next_token toks
   in
     if nt <> #")" then
@@ -98,23 +104,40 @@ and parse_base SIGMA (#"("::XS) =
     else
       (e, rtoks)
   end
-  | parse_base SIGMA (X::XS) =
+  | parse_base SIGMA TOKS =
   let
+    val (syms, rest) = take_while (fn (x) => member x SIGMA) TOKS
     val start_state = new_state ()
-    val end_state = new_state ()
+    val end_state = new_state ();
+    val new_states = start_state::(map (fn s => new_state ()) (tl syms)) @ [end_state]
+    val utrans = pair (new_states @ [end_state])
+    val trans = map (fn ((d, cd), t) => ((d, t), cd)) (ListPair.zip (utrans, syms))
     val fsm =  (
       SIGMA,
-      [start_state, end_state],
+      new_states,
       start_state,
       (
-        [((start_state, X), end_state)],
+        trans,
         []
       ),
       [end_state]
       )
   in
-    if member X SIGMA then
-      (fsm, XS)
-    else 
-      raise Fail "Character not in alphabet"
-  end;
+    if syms <> [] then
+      (fsm, rest)
+    else
+      raise Fail "Symbol not in alphabet."
+  end
+and take_while F [] = ([], [])
+  | take_while F (X::XS) =
+  let
+    val (beg, rest) = take_while F XS
+  in
+    if F X then
+      (X::beg, rest)
+    else
+      ([], X::XS)
+  end
+and pair [] = []
+  | pair [X] = []
+  | pair (X1::X2::XS) = (X1, X2)::pair (X2::XS);
