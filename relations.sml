@@ -42,7 +42,8 @@ fun transitive R =
 
 fun reflective_closure R = union R (map (fn (a) => (a, a)) (set R));
 fun symmetric_closure R = union R (map (fn (a, b) => (b, a)) R);
-fun transitive_closure R = 
+fun transitive_closure [] = []
+  | transitive_closure R =
   let 
     val nelems = length (set R)
     val n = ceil (Math.ln (Real.fromInt nelems) / Math.ln 2.0)
