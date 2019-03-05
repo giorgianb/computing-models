@@ -1,4 +1,3 @@
-(* NDFA to implement (aba|aaa|abb)* *)
 use "relations.sml";
 fun alphabet (SIGMA, S, S0, DELTA, F) = SIGMA;
 fun states (SIGMA, S, S0, DELTA, F) = S;
