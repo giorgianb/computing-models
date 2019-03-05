@@ -32,3 +32,11 @@ and single_product E [] = []
 fun powerset L = powerset_accumulator [] L
 and powerset_accumulator S [] = [S]
   | powerset_accumulator S (X::XS) = powerset_accumulator (X::S) XS @ powerset_accumulator S XS;
+
+fun difference L1 [] = L1
+  | difference [] L2 = []
+  | difference (X::XS) L2 =
+  if member X L2 then
+    difference XS L2
+  else
+    X::difference XS L2;
