@@ -1,5 +1,4 @@
 use "ndfa.sml";
-
 val EMPTY = #"\000";
 fun next_token [] = (EMPTY, [])
   | next_token (X::XS) = (X, XS)
@@ -50,7 +49,7 @@ and parse_union SIGMA E =
   in
     if nt = #"|" then
       let
-        val (right, rtoks) = parse_klein SIGMA rtoks
+        val (right, rtoks) = parse_union SIGMA rtoks
         val start = new_state ()
         val ntrans = [(start, start_state left), (start, start_state right)] 
         val fsm = (
