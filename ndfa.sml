@@ -1,22 +1,3 @@
-val ndfa = (
-  ["a", "b"],
-  ["q0", "q1", "q2", "q3"],
-  "q0",
-  (
-  [(("q0", "a"), "q1"),
-  (("q1", "a"), "q3"),
-  (("q1", "b"), "q2"),
-  (("q2", "a"), "q1"),
-  (("q2", "a"), "q0"),
-  (("q2", "b"), "q2"),
-  (("q3", "a"), "q3"),
-  (("q3", "b"), "q1")
-  ],
-  []
-  ),
-  ["q3"]
-  );
-
 use "relations.sml";
 fun alphabet (SIGMA, S, S0, DELTA, F) = SIGMA;
 fun states (SIGMA, S, S0, DELTA, F) = S;
@@ -59,8 +40,6 @@ fun in_language S FSM = intersection (run_ndfa [start_state FSM] S FSM) (accepti
 and run_ndfa s [] FSM = s
   | run_ndfa s (X::XS) FSM = run_ndfa (next_states X s FSM) XS FSM;
 
-fun printList L = print (String.concat ["[", (String.concatWith ", " L), "]\n"]);
-
 fun to_dfa FSM = to_dfa_accumulator [[start_state FSM]] [[start_state FSM]] [] FSM
 and to_dfa_accumulator new seen delta FSM =
   let
@@ -78,7 +57,3 @@ and to_dfa_accumulator new seen delta FSM =
     else
       to_dfa_accumulator nseen (nseen @ seen) (ndelta @ delta) FSM
   end;
-
-val dfa = to_dfa ndfa;
-map (fn ((a, b), c) => (print "From: "; printList a; print "Using: "; print b;
-print "\nTo: "; printList c)) (transitions dfa);
