@@ -61,7 +61,7 @@ and run_ndfa s [] FSM = s
 
 fun printList L = print (String.concat [(String.concatWith ", " L), "\n"]);
 
-fun to_dfa FSM = to_dfa_accumulator [[start_state FSM]] [] [] FSM
+fun to_dfa FSM = to_dfa_accumulator [[start_state FSM]] [[start_state FSM]] [] FSM
 and to_dfa_accumulator new seen delta FSM =
   let
     val trans = product new (alphabet FSM)
