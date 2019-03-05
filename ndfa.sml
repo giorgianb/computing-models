@@ -72,7 +72,7 @@ and to_dfa_accumulator new seen delta FSM =
     if nseen = [] then
       (alphabet FSM,
       seen,
-      start_state FSM,
+      [start_state FSM],
       delta,
       (List.filter (fn s => intersection s (accepting_states FSM) <> []) seen))
     else
